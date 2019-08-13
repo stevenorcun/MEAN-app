@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Post } from '../post.model';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'create-post',
@@ -18,6 +19,7 @@ export class CreatePostComponent implements OnInit {
   private postId: string;
   post: Post;
   form: FormGroup;
+  imagePreview: string
 
   constructor(public postsService: PostsService, public route: ActivatedRoute) { }
 
@@ -40,7 +42,6 @@ export class CreatePostComponent implements OnInit {
             };
             this.setFormValues();
           })
-        console.log(this.post);
       }else{
         this.mode = 'create';
         this.postId = null;
@@ -50,18 +51,25 @@ export class CreatePostComponent implements OnInit {
 
   initForm(){
     this.form = new FormGroup({
-      'title': new FormControl(null,{
+      title: new FormControl(null,{
         validators: [
           Validators.required,
           Validators.minLength(3)
         ]
       }),
-      'content': new FormControl(null, {
+      content: new FormControl(null, {
         validators: [
           Validators.required,
           Validators.minLength(4)
         ]
-      })
+      }),
+      image: new FormControl(null, {
+        validators: [
+          Validators.required
+        ],
+        asyncValidators: [mimeType]
+      }
+      )
     })
   }
 
@@ -73,7 +81,6 @@ export class CreatePostComponent implements OnInit {
   }
 
   createPost(){
-    console.log(this.form);
     if(this.form.invalid)
       return;
     this.isLoading = true;
@@ -83,5 +90,19 @@ export class CreatePostComponent implements OnInit {
       this.postsService.updatePost(this.postId, this.form.value.title, this.form.value.content);
     }
     this.form.reset();
+  }
+
+  // Object Event is OOTB
+  onImagePicked(event: Event){
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({
+      image: file
+    });
+    this.form.get('image').updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 }
