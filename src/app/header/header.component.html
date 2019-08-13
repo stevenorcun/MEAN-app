@@ -1,0 +1,41 @@
+
+<mat-toolbar
+  color="primary"
+>
+  <h2>Post App</h2>
+  <span class="spacer"></span>
+  <ul>
+    <li>
+      <a
+        mat-button
+        routerLink="/create"
+        >
+        Create Post
+      </a>
+    </li>
+    <li>
+        <a
+          mat-button
+          routerLink="/"
+        >
+          All Posts
+        </a>
+    </li>
+    <li *ngIf="!isLogged">
+        <a
+          mat-button
+          routerLink="/auth"
+        >
+          Sign in
+        </a>
+    </li>
+    <li *ngIf="isLogged">
+        <a
+          mat-button
+          routerLink="/"
+        >
+          Log out
+        </a>
+    </li>
+  </ul>
+</mat-toolbar>

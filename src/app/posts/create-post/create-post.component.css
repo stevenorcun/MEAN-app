@@ -1,0 +1,27 @@
+
+mat-card{
+    background: white;
+}
+
+mat-form-field{
+    width: 100%;
+}
+
+textarea{
+    width: 100%;
+    color: black;
+}
+
+:host{
+    display: block;
+    margin-top: 1rem;
+}
+
+/* To center the spinner */
+mat-spinner{
+    margin: auto;
+}
+
+input[type="file"]{
+    visibility: hidden;
+}

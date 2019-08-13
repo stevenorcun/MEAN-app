@@ -1,0 +1,14 @@
+/* Host selector refer to the component itself */
+:host{
+    /* Make the element to display block */
+    display: block;
+    margin-top: 1rem;
+}
+
+#log-post{
+    margin-top: 5px;
+}
+
+mat-spinner{
+    margin: auto;
+}
