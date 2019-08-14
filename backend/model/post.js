@@ -11,6 +11,10 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 255
+    },
+    imagePath: {
+        type: String,
+        required: true
     }
 })
 

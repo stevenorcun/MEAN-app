@@ -38,7 +38,8 @@ export class CreatePostComponent implements OnInit {
             this.post = {
               id: post._id,
               title: post.title,
-              content: post.content
+              content: post.content,
+              imagePath: null
             };
             this.setFormValues();
           })
@@ -85,9 +86,15 @@ export class CreatePostComponent implements OnInit {
       return;
     this.isLoading = true;
     if(this.mode === 'create'){
-      this.postsService.addPost(this.form.value.title, this.form.value.content);
+      this.postsService.addPost(
+        this.form.value.title,
+        this.form.value.content,
+        this.form.value.image);
     }else{
-      this.postsService.updatePost(this.postId, this.form.value.title, this.form.value.content);
+      this.postsService.updatePost(
+        this.postId,
+        this.form.value.title,
+        this.form.value.content);
     }
     this.form.reset();
   }
