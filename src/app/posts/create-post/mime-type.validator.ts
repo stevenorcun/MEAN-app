@@ -1,12 +1,11 @@
 import { AbstractControl } from '@angular/forms';
 import { Observable, Observer, of } from 'rxjs';
 
-// All validators are all just functions that check and return a value
+// All validators are just functions that check and return a value
 // asynchronous method
 
-export const mimeType = (
-    control: AbstractControl
-  ): Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
+export const mimeType = (control: AbstractControl):
+    Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
     if (typeof(control.value) === 'string') {
       return of(null);
     }

@@ -8,6 +8,9 @@
               {{ post.title }}
             </mat-panel-title>
         </mat-expansion-panel-header>
+        <div class="post-image">
+            <img [src]="post.imagePath" [alt]="post.title">
+        </div>
         <p>{{ post.content }}</p>
         <mat-action-row>
             <a
@@ -27,4 +30,14 @@
         </mat-action-row>
     </mat-expansion-panel>
 </mat-accordion>
+<mat-paginator
+    [length]="totalPost"
+    [pageSize]="postPerPage"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onChangePage($event)"
+    *ngIf="posts.length > 0"
+>
+
+</mat-paginator>
 <button id= "log-post" mat-raised-button (click)="onClickConsoleLogPosts()">Log Posts</button>
+<p class="info-text mat-body-1" *ngIf="posts.length <= 0 && !isLoading">No posts added yet!</p>

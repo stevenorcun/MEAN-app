@@ -4,20 +4,22 @@ import { Subject } from 'rxjs';
 import { HttpClient} from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { identifierModuleUrl } from '@angular/compiler';
 
 // The second way to tell Angular this is a Service and I want to have an instance of it
 // Where is call
 @Injectable({providedIn: 'root'})
 export class PostsService{
     posts: Post[] = [];
-    private postUpdated = new Subject<Post[]>()
+    // Subject joue le rôle d'un Observable dont on pourra subscribe avec un Observer
+    private postUpdated = new Subject<{posts: Post[], postCount: number}>()
 
     constructor(private http: HttpClient, private router: Router){
 
     }
 
     // La methode get renvoit un Observable
-    // On va va subscribe cet Observable et ainsi utiliser les méthodes d'un Observer
+    // On va subscribe à cet Observable et ainsi utiliser les méthodes d'un Observer
     // next(value), error(err), complete(); 
     getStore(){
         this.http.get('http://localhost:3000/api/posts/')
@@ -28,21 +30,31 @@ export class PostsService{
             )
     }
 
-    getPosts(){
-        this.http.get<{message: string; posts: any}>('http://localhost:3000/api/posts')
+    getPosts(postPerPage: number, currentPage: number){
+        const queryParams = `?pageSize=${postPerPage}&page=${currentPage}`;
+        this.http.get<{message: string; posts: any, maxPosts: number}>('http://localhost:3000/api/posts'+queryParams)
+        // Ici on reformate les données du stream avant de subscribe
             .pipe( map( postData => {
-                return postData.posts.map( post => {
-                    return {
-                        title: post.title,
-                        content: post.content,
-                        id: post._id,
-                        imagePath: post.imagePath
-                    }
-                });
+                return{
+                    posts: postData.posts.map( post => {
+                        return {
+                            title: post.title,
+                            content: post.content,
+                            id: post._id,
+                            imagePath: post.imagePath
+                        };
+                    }),
+                    maxPosts: postData.maxPosts
+                };
             }))
+            // Ici on subscribe sur les données reformatées
             .subscribe(transformedPosts => {
-                this.posts = transformedPosts;
-                this.postUpdated.next([...this.posts]);
+                this.posts = transformedPosts.posts;
+                // On ajoute les données à l'Observable Subject
+                this.postUpdated.next({
+                    posts: [...this.posts],
+                    postCount: transformedPosts.maxPosts
+                });
             })
     }
 
@@ -51,10 +63,9 @@ export class PostsService{
     }
 
     getPostById(id: string){
-        return this.http.get<
-                {_id: string,title: string,content: string}
-            >('http://localhost:3000/api/posts/'+id);
-                
+        return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(
+            "http://localhost:3000/api/posts/" + id
+          );
     }
 
     addPost(title: string, content: string, image: File){
@@ -64,39 +75,34 @@ export class PostsService{
         postData.append("title", title);
         postData.append("content", content);
         postData.append("image", image, title);
-        this.http.post<{message: string, post: Post}>
-                ('http://localhost:3000/api/posts', postData)
-                .subscribe( (responseData) => {
-                    const post: Post = {
-                        id: responseData.post.id,
-                        title,
-                        content,
-                        imagePath: responseData.post.imagePath
-                    };
-                    this.posts.push(post);
-                    this.postUpdated.next([...this.posts]);
+        this.http.post<{message: string, post: Post}>(
+        // Coté back, Node JS reconnaitra le type posteData n'étant pas un objet JSON
+                'http://localhost:3000/api/posts',
+                postData)
+                .subscribe( (response) => {
                     this.mainRoute();
                 });     
     }
 
     deletePost(postId: string){
-        this.http.delete('http://localhost:3000/api/posts/'+postId)
-                .subscribe( () => {
-                    const updatedPosts = this.posts.filter(post => post.id !== postId);
-                    this.posts = updatedPosts;
-                    this.postUpdated.next([...this.posts]);
-                })
+        return this.http.delete('http://localhost:3000/api/posts/'+postId);
     }
 
-    updatePost(postId: string, title: string, content: string){
-        const post: Post = {id: postId, title, content, imagePath: null};
-        this.http.put('http://localhost:3000/api/posts/'+postId, post)
+    // Le parametre image est soit File (si on update l'image) ou string si on ne fait rien
+    updatePost(postId: string, title: string, content: string, image: File | string){
+        let postData: Post | FormData;
+        if(typeof image === 'object'){
+            postData = new FormData();
+            postData.append('id', postId);
+            postData.append('title', title);
+            postData.append('content', content);
+            postData.append('image', image, title);
+        }
+        else{
+            postData = {id: postId, title, content, imagePath: image};
+        }
+        this.http.put('http://localhost:3000/api/posts/'+postId, postData)
             .subscribe( response => {
-                const updatePost = [...this.posts];
-                const oldPostIndex = updatePost.findIndex( p => p.id === post.id);
-                updatePost[oldPostIndex] = post;
-                this.posts = updatePost;
-                this.postUpdated.next([...this.posts]);
                 this.mainRoute();
             })
     }

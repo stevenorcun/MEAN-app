@@ -24,9 +24,17 @@
     <li *ngIf="!isLogged">
         <a
           mat-button
-          routerLink="/auth"
+          routerLink="/login"
         >
-          Sign in
+          Log in
+        </a>
+    </li>
+    <li *ngIf="!isLogged">
+        <a
+          mat-button
+          routerLink="/signup"
+        >
+          Sign up
         </a>
     </li>
     <li *ngIf="isLogged">

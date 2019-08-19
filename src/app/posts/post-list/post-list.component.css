@@ -12,3 +12,27 @@
 mat-spinner{
     margin: auto;
 }
+
+.info-text {
+    text-align: center;
+}
+  
+.post-image {
+    width: 100%;
+    /* img étant inline-block => on peut use text-align et center pour centrer */
+    text-align: center;
+}
+  
+.post-image img {
+    width: 50%;
+    /* On fait de img display block (car de base inline block) afin de pouvoir centrer*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 10%x;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+mat-paginator{
+    margin-top: 1rem;
+}

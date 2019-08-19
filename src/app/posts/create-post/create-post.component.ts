@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Post } from '../post.model';
+// Custom async validator
 import { mimeType } from './mime-type.validator';
 
 @Component({
@@ -19,30 +20,20 @@ export class CreatePostComponent implements OnInit {
   private postId: string;
   post: Post;
   form: FormGroup;
-  imagePreview: string
+  imagePreview: string;
 
   constructor(public postsService: PostsService, public route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.initForm();
     // the paramMap is an observable because the params in the url can change
     // so we observe it, we can listen to the changes and do things
-    this.route.paramMap.subscribe( (paramMap: ParamMap) => {
-      this.initForm();
-      if(paramMap.has('postId')){
+    this.route.paramMap.subscribe( (paramMapUrl: ParamMap) => {
+      if(paramMapUrl.has('postId')){
         this.mode = 'edit';
-        this.postId = paramMap.get('postId');
+        this.postId = paramMapUrl.get('postId');
         this.isLoading = true;
-        this.postsService.getPostById(this.postId)
-          .subscribe( post => {
-            this.isLoading = false;
-            this.post = {
-              id: post._id,
-              title: post.title,
-              content: post.content,
-              imagePath: null
-            };
-            this.setFormValues();
-          })
+        this.postById();
       }else{
         this.mode = 'create';
         this.postId = null;
@@ -50,10 +41,25 @@ export class CreatePostComponent implements OnInit {
     });
   }
 
+  postById(){
+    this.postsService.getPostById(this.postId)
+    .subscribe( response => {
+      this.isLoading = false;
+      this.post = {
+        id: response._id,
+        title: response.title,
+        content: response.content,
+        imagePath: response.imagePath
+      };
+      this.setFormValues();
+    })
+  }
+
   initForm(){
     this.form = new FormGroup({
       title: new FormControl(null,{
         validators: [
+          // OOTB Angular validators with module Validators
           Validators.required,
           Validators.minLength(3)
         ]
@@ -68,6 +74,7 @@ export class CreatePostComponent implements OnInit {
         validators: [
           Validators.required
         ],
+        // Own Async Validator
         asyncValidators: [mimeType]
       }
       )
@@ -76,8 +83,9 @@ export class CreatePostComponent implements OnInit {
 
   setFormValues(){
     this.form.setValue({
-      'title': this.post.title,
-      'content': this.post.content
+      title: this.post.title,
+      content: this.post.content,
+      image: this.post.imagePath
     })
   }
 
@@ -94,7 +102,8 @@ export class CreatePostComponent implements OnInit {
       this.postsService.updatePost(
         this.postId,
         this.form.value.title,
-        this.form.value.content);
+        this.form.value.content,
+        this.form.value.image)
     }
     this.form.reset();
   }
