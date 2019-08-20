@@ -15,6 +15,10 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
+    // Dans le app component cette méthode doit est appelée
+    // Or le app component est appeler avant avec la methode autoAuth
+    // => le header n'est au courant du status
+    this.userIsAuthenticated = this.authService.getIsAuthenticated();
     this.authService.getAuthStatusListener()
       .subscribe(isAuthenticated => {
         this.userIsAuthenticated = isAuthenticated;

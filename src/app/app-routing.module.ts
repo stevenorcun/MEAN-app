@@ -14,11 +14,13 @@ const routes: Routes = [
   {
     path: 'create',
     component: CreatePostComponent,
+    // La route est protégé, si non logged => redirection
     canActivate: [AuthGuard]
   },
   {
     path: 'edit/:postId',
     component: CreatePostComponent,
+    // La route est protégé, si non logged => redirection
     canActivate: [AuthGuard]
   },
   {
