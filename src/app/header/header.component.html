@@ -5,7 +5,7 @@
   <h2>Post App</h2>
   <span class="spacer"></span>
   <ul>
-    <li>
+    <li *ngIf="userIsAuthenticated">
       <a
         mat-button
         routerLink="/create"
@@ -21,7 +21,7 @@
           All Posts
         </a>
     </li>
-    <li *ngIf="!isLogged">
+    <li *ngIf="!userIsAuthenticated">
         <a
           mat-button
           routerLink="/login"
@@ -29,7 +29,7 @@
           Log in
         </a>
     </li>
-    <li *ngIf="!isLogged">
+    <li *ngIf="!userIsAuthenticated">
         <a
           mat-button
           routerLink="/signup"
@@ -37,13 +37,13 @@
           Sign up
         </a>
     </li>
-    <li *ngIf="isLogged">
-        <a
+    <li *ngIf="userIsAuthenticated">
+        <button
           mat-button
-          routerLink="/"
+          (click)='onLogout()'
         >
           Log out
-        </a>
+    </button>
     </li>
   </ul>
 </mat-toolbar>
