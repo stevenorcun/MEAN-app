@@ -74,9 +74,9 @@ router.post("", checkAut ,multer({storage}).single('image'),(req, res) => {
         title: req.body.title,
         content: req.body.content,
         imagePath: url + "/images/" + req.file.filename,
+        // Grace au middleware chechAut on accès à l'Id de l'user
         creator: req.userData.userId
     });
-    console.log(req.userData);
     post.save().then(createdPost => {
         res.status(201).json({
             message: "Post created",
@@ -88,7 +88,7 @@ router.post("", checkAut ,multer({storage}).single('image'),(req, res) => {
     })
 })
 
-router.put('/:id', multer({ storage }).single("image"), async (req, res) => {
+router.put('/:id', checkAut ,multer({ storage }).single("image"), async (req, res) => {
     let imagePath = req.body.imagePath;
     if (req.file) {
         const url = req.protocol + "://" + req.get("host");
@@ -98,26 +98,39 @@ router.put('/:id', multer({ storage }).single("image"), async (req, res) => {
         _id: req.params.id,
         title: req.body.title,
         content: req.body.content,
-        imagePath
+        imagePath,
+        creator: req.userData.userId
     });
     
-    Post.updateOne({_id: req.params.id}, post)
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post)
         .then(result => {
-            res.status(201).json({
-                message: "Updated successfully !",
-                post
-            })
+            if(result.nModified > 0){
+                res.status(201).json({
+                    message: "Updated successfully !",
+                    post
+                })
+            }else{
+                res.status(404).json({
+                    message: 'Not Authorized'
+                })
+            }
         })
 })
 
 router.delete("/:id", checkAut, (req, res, next) => {
-    Post.deleteOne({_id: req.params.id})
-        .then( result => {
+    Post.deleteOne({_id: req.params.id, creator: req.userData.userId})
+    .then(result => {
+        if(result.n > 0){
             res.status(201).json({
-                message: 'post deleted',
+                message: "Deleted successfully !",
                 result
             })
-        })
+        }else{
+            res.status(404).json({
+                message: 'Not Authorized'
+            })
+        }
+    })
 })
 
 module.exports = router;
