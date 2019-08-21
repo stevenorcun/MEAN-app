@@ -99,14 +99,12 @@ export class AuthService {
   private setExpirationdate(expirationDuration){
     const now = new Date();
     const expirationDate = new Date(now.getTime() + expirationDuration * 1000);
-    console.log(expirationDate.getUTCMinutes());
     return expirationDate;
   }
 
   private getAuthData(){
     const token = localStorage.getItem("token");
     const expirationDate = localStorage.getItem("expiration")
-    console.log(expirationDate);
     if(!token || !expirationDate){
       return;
     }
