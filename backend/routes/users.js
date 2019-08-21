@@ -56,7 +56,10 @@ router.post('/login', (req, res) => {
                 );
             res.status(200).json({
                 token,
-                expireIn: 3600
+                expireIn: 3600,
+                // On rajoute ce champ suplémentaire et on l'envoi au front
+                // car si le token doit être décodé coté front => baisse de performance
+                userId: fetchedUser._id
             })
         })
         .catch( err => {

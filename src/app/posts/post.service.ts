@@ -31,7 +31,10 @@ export class PostsService{
 
     getPosts(postPerPage: number, currentPage: number){
         const queryParams = `?pageSize=${postPerPage}&page=${currentPage}`;
-        this.http.get<{message: string; posts: any, maxPosts: number}>('http://localhost:3000/api/posts'+queryParams)
+        this.http.
+        get<{message: string; posts: any; maxPosts: number}>(
+            'http://localhost:3000/api/posts'+queryParams
+            )
         // Ici on reformate les données du stream avant de subscribe
             .pipe( map( postData => {
                 return{
@@ -63,7 +66,8 @@ export class PostsService{
     }
 
     getPostById(id: string){
-        return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(
+        return this.http
+            .get<{_id: string,title: string, content: string, imagePath: string, creator: string}>(
             "http://localhost:3000/api/posts/" + id
           );
     }
@@ -99,7 +103,7 @@ export class PostsService{
             postData.append('image', image, title);
         }
         else{
-            postData = {id: postId, title, content, imagePath: image};
+            postData = {id: postId, title, content, imagePath: image, creator: null};
         }
         this.http.put('http://localhost:3000/api/posts/'+postId, postData)
             .subscribe( response => {
