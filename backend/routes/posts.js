@@ -15,7 +15,6 @@ const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         const isValid = MIME_TYPE_MAP[file.mimetype];
         let error = new Error('Invalid mime type');
-        console.log(file);
         if(isValid){
             error = null;
         }
@@ -31,7 +30,7 @@ const storage = multer.diskStorage({
     }
 })
 
-router.get('', async (req, res)=> {
+router.get('', (req, res)=> {
     // The so called req.query permet de voir les paramètre de l'URL
     // On récupère un objet JSON 
     // On met un '+' devant pour récupérer un number et non un String
@@ -58,7 +57,7 @@ router.get('', async (req, res)=> {
         })
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', (req, res) => {
     Post.findById(req.params.id)
         .then( post => {
             if(post){

@@ -24,6 +24,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use("/images", express.static(__dirname + '/images'));
 
 app.use((req, res, next) => {
+    // On configure notre backedn pour la gestion des requêtes du front
+    // On utilise ce middleware avant toutes routes
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
         'Access-Control-Allow-Headers',

@@ -13,15 +13,18 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class PostListComponent implements OnInit, OnDestroy {
   
   posts: Post[] = [];
+  userIsAuthenticated = false;
+  // For teh spinner
   isLoading = false;
   totalPost = 0;
   postPerPage= 2;
   // User will choose between 1, 2 or 10 per page
-  pageSizeOptions = [1,2, 10];
+  pageSizeOptions = [1,2,5,10];
   currentPage = 1;
+  // For subscribe to Subject in postService
   private postsSub: Subscription;
+  // For subscribe to Subject in authService
   private authStatusSubds: Subscription;
-  userIsAuthenticated = false;
 
   constructor(public postsService: PostsService, private authService: AuthService ) { }
 

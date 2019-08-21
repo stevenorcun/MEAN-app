@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Avec cette config, désormais les properties avec unique seront chécker => pas de doublons.
+// Avec cette config, désormais les properties avec unique seront chéckées => pas de doublons.
 userSchema.plugin(uniqueValidators);
 
 module.exports = mongoose.model('User', userSchema);

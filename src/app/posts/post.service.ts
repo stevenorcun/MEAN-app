@@ -4,7 +4,6 @@ import { Subject } from 'rxjs';
 import { HttpClient} from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { identifierModuleUrl } from '@angular/compiler';
 
 // The second way to tell Angular this is a Service and I want to have an instance of it
 // Where is call

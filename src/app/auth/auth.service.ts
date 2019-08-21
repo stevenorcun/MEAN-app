@@ -43,7 +43,7 @@ export class AuthService {
         const token = response.token;
         this.token = token;
         if(token){
-          const expirationDuration = response.expireIn * 1000;
+          const expirationDuration = response.expireIn;
           this.setTimer(expirationDuration);
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
@@ -87,26 +87,27 @@ export class AuthService {
 
   private clearAuthData(){
     localStorage.removeItem("token");
-    localStorage.removeItems("expiration");
+    localStorage.removeItem("expiration");
   }
 
   private setTimer(timer: number){
     this.tokenTimer = setTimeout( () => {
       this.logout();
-    }, timer);
+    }, timer * 1000);
   }
 
   private setExpirationdate(expirationDuration){
     const now = new Date();
-    const expirationDate = new Date(now.getTime() + expirationDuration);
-    console.log(expirationDate);
+    const expirationDate = new Date(now.getTime() + expirationDuration * 1000);
+    console.log(expirationDate.getUTCMinutes());
     return expirationDate;
   }
 
   private getAuthData(){
     const token = localStorage.getItem("token");
     const expirationDate = localStorage.getItem("expiration")
-    if(token || expirationDate){
+    console.log(expirationDate);
+    if(!token || !expirationDate){
       return;
     }
     return {
