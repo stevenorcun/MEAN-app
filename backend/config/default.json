@@ -1,0 +1,7 @@
+
+{
+    "requiresAuth": true,
+    "db": "posts",
+    "url": "mongodb://127.0.0.1:27017/",
+    "jwtprivateKey": "the_secret_jwt_should_be_long_and_encoded_for_higher_security"
+}

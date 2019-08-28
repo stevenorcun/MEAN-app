@@ -1,19 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const chalk = require('chalk');
 const postRouter = require('./routes/posts');
 const userRouter = require('./routes/users');
+const cors = require('./startup/cors');
 
 // EXPRESS INSTANCE
 const app = express();
 
+// Use cors
+app.use(cors);
+
 // CONNEXION TO MONGO
-mongoose.connect('mongodb://127.0.0.1:27017/posts', {useNewUrlParser: true})
-                .then( () => {
-                    console.log(chalk.green.inverse('Connected to mongoDB'))
-                })
-                .catch( err => console.log(err.message));
+require('./startup/db')();
 
 // Use the middleware json()
 app.use(bodyParser.json());
@@ -22,21 +21,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 // Pour le fichier image => on utilise le middleware static() pour permettre
 // toute requête vers des file présent dans ce dossier.
 app.use("/images", express.static(__dirname + '/images'));
-
-app.use((req, res, next) => {
-    // On configure notre backedn pour la gestion des requêtes du front
-    // On utilise ce middleware avant toutes routes
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        "Origin, W-Request-Width, Content-type, Accept, Authorization"
-    );
-    res.setHeader(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-    );
-    next();
-});
 
 app.use('/api/posts', postRouter);
 app.use('/api/users', userRouter);
