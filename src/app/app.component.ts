@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { AuthService } from './auth/auth.service';
 
@@ -9,10 +9,17 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent implements OnInit{
 
+  name = "I come from Parent"
+  someData: any;
   constructor(private authService: AuthService){}
 
   ngOnInit(){
     this.authService.autoAuthuser();
+  }
+
+  onRecieve(data){
+    this.someData = data;
+    console.log(this.someData);
   }
 
   checkTimeLeft(){

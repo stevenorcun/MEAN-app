@@ -27,7 +27,8 @@ input[type="file"]{
 }
 
 .image-preview{
-    height: 5rem;
+    height: 70px;
+    width: 70px;
     margin: 1rem 0
 }
 

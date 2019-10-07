@@ -68,7 +68,7 @@ router.get('/:id', (req, res) => {
         })
 })
 
-router.post("", checkAut ,multer({storage}).single('image'),(req, res) => {
+router.post("", checkAut , multer({storage}).single('image'),(req, res) => {
     const url = req.protocol + "://" + req.get("host");
     const post = new Post({
         title: req.body.title,

@@ -15,7 +15,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
   userIsAuthenticated = false;
   userId: string;
-  // For teh spinner
+  // For the spinner
   isLoading = false;
   totalPost = 0;
   postPerPage= 2;
@@ -38,6 +38,7 @@ export class PostListComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.totalPost = postData.postCount;
           this.posts = postData.posts;
+          console.log(this.posts);
         });
     this.userIsAuthenticated = this.authService.getIsAuthenticated();
     this.authStatusSubds = this.authService.getAuthStatusListener()
